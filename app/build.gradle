@@ -57,7 +57,7 @@ android {
 
 
 rebuildChannel {
-    baseReleaseApk = new File(project.projectDir, "baseApk/TinkerDemo-base-release.apk")
+    baseReleaseApk = new File(project.projectDir, "baseApk/tinkerdemo-base-signed.apk")
 }
 
 dependencies {
