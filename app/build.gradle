@@ -6,7 +6,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.star.tinker"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -41,11 +41,6 @@ android {
         }
     }
 
-    rebuildChannel {
-        baseReleaseApk = new File(project.projectDir, "baseApk/TinkerDemo-base-release.apk")
-    }
-
-
     buildTypes {
         release {
             minifyEnabled false
@@ -58,6 +53,11 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+}
+
+
+rebuildChannel {
+    baseReleaseApk = new File(project.projectDir, "baseApk/TinkerDemo-base-release.apk")
 }
 
 dependencies {
