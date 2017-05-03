@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'channel'
 
 android {
     compileSdkVersion 25
@@ -40,6 +41,11 @@ android {
         }
     }
 
+    rebuildChannel {
+        baseReleaseApk = new File(project.projectDir, "baseApk/TinkerDemo-base-release.apk")
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -62,6 +68,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.0'
     provided 'com.tencent.tinker:tinker-android-anno:1.7.9'
     compile 'com.tencent.tinker:tinker-android-lib:1.7.9'
+    compile 'com.leon.channel:helper:1.0.2'
 
     testCompile 'junit:junit:4.12'
 }
