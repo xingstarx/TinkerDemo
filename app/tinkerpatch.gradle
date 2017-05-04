@@ -1,3 +1,5 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 def gitSha() {
     try {
@@ -20,7 +22,7 @@ def bakPath = file("${buildDir}/bakApk/")
  */
 ext {
     //for some reason, you may want to ignore tinkerBuild, such as instant run debug build?
-    tinkerEnabled = true
+    tinkerEnabled = isRelease()
 
     //for normal build
     //old apk file to build patch apk
@@ -57,6 +59,29 @@ def buildWithTinker() {
 
 def getTinkerBuildFlavorDirectory() {
     return ext.tinkerBuildFlavorDirectory
+}
+
+def isRelease() {
+    Gradle gradle = getGradle()
+    String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+
+    Pattern pattern;
+    if (tskReqStr.contains("assemble")) {
+        println tskReqStr
+        pattern = Pattern.compile("assemble(\\w*)(Release|Debug)")
+    } else {
+        pattern = Pattern.compile("generate(\\w*)(Release|Debug)")
+    }
+    Matcher matcher = pattern.matcher(tskReqStr)
+
+    if (matcher.find()) {
+        String task = matcher.group(0).toLowerCase()
+        println("[BuildType] Current task: " + task)
+        return task.contains("release")
+    } else {
+        println "[BuildType] NO MATCH FOUND"
+        return true;
+    }
 }
 
 if (buildWithTinker()) {
