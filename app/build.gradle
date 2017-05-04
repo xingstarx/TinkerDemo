@@ -25,6 +25,8 @@ android {
                 storePassword "testres"
                 keyAlias "testres"
                 keyPassword "testres"
+                v1SigningEnabled true
+                v2SigningEnabled true
             } catch (ex) {
                 throw new InvalidUserDataException(ex.toString())
             }
@@ -32,6 +34,8 @@ android {
 
         debug {
             storeFile file("./keystore/debug.keystore")
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 
@@ -57,7 +61,7 @@ android {
 
 
 rebuildChannel {
-    baseReleaseApk = new File(project.projectDir, "baseApk/tinkerdemo-base-signed.apk")
+    baseReleaseApk = new File(project.projectDir, "baseApk/app_base_release.apk")
 }
 
 dependencies {
