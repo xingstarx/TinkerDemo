@@ -26,16 +26,19 @@ ext {
 
     //for normal build
     //old apk file to build patch apk
-    tinkerOldApkPath = "${bakPath}/app-release-0504-00-23-09.apk"
+    tinkerOldApkPath = "${bakPath}/${getBaseApkPrefix()}.apk"
     //proguard mapping file to build patch apk
-    tinkerApplyMappingPath = "${bakPath}/app-release-0504-00-23-09-mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/${getBaseApkPrefix()}-mapping.txt"
     //resource R.txt to build patch apk, must input if there is resource changed
-    tinkerApplyResourcePath = "${bakPath}/app-release-0504-00-23-09-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/${getBaseApkPrefix()}-R.txt"
 
     //only use for build all flavor, if not, just ignore this field
     tinkerBuildFlavorDirectory = "${bakPath}/app-1018-17-32-47"
 }
 
+def getBaseApkPrefix() {
+    return hasProperty("BASE_APK_PREFIX") ? BASE_APK_PREFIX : "app-release-0504-00-23-09"
+}
 
 def getOldApkPath() {
     return hasProperty("OLD_APK") ? OLD_APK : ext.tinkerOldApkPath
