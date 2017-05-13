@@ -72,7 +72,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.0'
     provided 'com.tencent.tinker:tinker-android-anno:1.7.9'
     compile 'com.tencent.tinker:tinker-android-lib:1.7.9'
-    compile 'com.leon.channel:helper:1.0.2'
+    compile 'com.leon.channel:helper:1.0.4'
 
     testCompile 'junit:junit:4.12'
 }
