@@ -70,8 +70,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.0'
-    provided 'com.tencent.tinker:tinker-android-anno:1.7.9'
-    compile 'com.tencent.tinker:tinker-android-lib:1.7.9'
+    provided 'com.tencent.tinker:tinker-android-anno:1.7.11'
+    compile 'com.tencent.tinker:tinker-android-lib:1.7.11'
     compile 'com.leon.channel:helper:1.0.4'
 
     testCompile 'junit:junit:4.12'
