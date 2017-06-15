@@ -13,7 +13,7 @@ def gitSha() {
     }
 }
 
-def bakPath = file("${buildDir}/bakApk/")
+def bakPath = file("${project.getProjectDir()}/tinkerApk/")
 
 /**
  * you can use assembleRelease to build you base apk
@@ -53,7 +53,7 @@ def getApplyResourceMappingPath() {
 }
 
 def getTinkerIdValue() {
-    return hasProperty("TINKER_ID") ? TINKER_ID : gitSha()
+    return VERSION_NAME
 }
 
 def buildWithTinker() {
@@ -72,6 +72,8 @@ def isRelease() {
     if (tskReqStr.contains("assemble")) {
         println tskReqStr
         pattern = Pattern.compile("assemble(\\w*)(Release|Debug)")
+    } else if (tskReqStr.contains("install")) {
+        pattern = Pattern.compile("install(\\w*)(Release|Debug)")
     } else {
         pattern = Pattern.compile("generate(\\w*)(Release|Debug)")
     }
@@ -83,7 +85,7 @@ def isRelease() {
         return task.contains("release")
     } else {
         println "[BuildType] NO MATCH FOUND"
-        return true;
+        return false;
     }
 }
 
