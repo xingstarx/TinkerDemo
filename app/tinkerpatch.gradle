@@ -20,7 +20,7 @@ ext {
 }
 
 def getBaseApkPrefix() {
-    return hasProperty("BASE_APK_PREFIX") ? BASE_APK_PREFIX : "app-release-0504-00-23-09"
+    return hasProperty("BASE_APK_PREFIX") ? BASE_APK_PREFIX : "app-release-" + VERSION_NAME
 }
 
 def getOldApkPath() {
@@ -48,15 +48,15 @@ def getTinkerBuildFlavorDirectory() {
 }
 
 def isRelease() {
-    Gradle gradle = getGradle()
     String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
-
     Pattern pattern;
     if (tskReqStr.contains("assemble")) {
         println tskReqStr
         pattern = Pattern.compile("assemble(\\w*)(Release|Debug)")
     } else if (tskReqStr.contains("install")) {
         pattern = Pattern.compile("install(\\w*)(Release|Debug)")
+    } else if (tskReqStr.contains("tinkerPatch")) {
+        pattern = Pattern.compile("tinkerPatch(\\w*)(Release|Debug)")
     } else {
         pattern = Pattern.compile("generate(\\w*)(Release|Debug)")
     }
