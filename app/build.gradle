@@ -73,6 +73,7 @@ dependencies {
     provided 'com.tencent.tinker:tinker-android-anno:1.7.11'
     compile 'com.tencent.tinker:tinker-android-lib:1.7.11'
     compile 'com.leon.channel:helper:1.0.4'
+    compile 'com.dx168.patchsdk:patchsdk:1.1.4'
 
     testCompile 'junit:junit:4.12'
 }

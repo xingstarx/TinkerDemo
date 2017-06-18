@@ -6,7 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.dx168.patchsdk.IPatchManager;
+import com.dx168.patchsdk.Listener;
+import com.dx168.patchsdk.PatchManager;
+import com.leon.channel.helper.ChannelReaderUtil;
 import com.star.tinker.Log.MyLogImp;
 import com.star.tinker.util.SampleApplicationContext;
 import com.star.tinker.util.TinkerManager;
@@ -21,12 +27,6 @@ public class BaseApplicationLike extends DefaultApplicationLike {
         super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
     }
 
-    /**
-     * install multiDex before install tinker
-     * so we don't need to put the tinker lib classes in the main dex
-     *
-     * @param base
-     */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onBaseContextAttached(Context base) {
@@ -39,14 +39,10 @@ public class BaseApplicationLike extends DefaultApplicationLike {
         TinkerManager.setTinkerApplicationLike(this);
 
         TinkerManager.initFastCrashProtect();
-        //should set before tinker is installed
         TinkerManager.setUpgradeRetryEnable(true);
 
-        //optional set logIml, or you can use default debug log
         TinkerInstaller.setLogIml(new MyLogImp());
 
-        //installTinker after load multiDex
-        //or you can put com.tencent.tinker.** to main dex
         TinkerManager.installTinker(this);
     }
 
@@ -55,4 +51,75 @@ public class BaseApplicationLike extends DefaultApplicationLike {
         getApplication().registerActivityLifecycleCallbacks(callback);
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        String appId = "20170618225955472-9663";
+        String appSecret = "9ebbf292b46345baaefe4dc68814f000";
+        String baseUrl = "http://192.168.1.105:8080/hotfix-apis";
+        PatchManager.getInstance().init(getApplication(), baseUrl, appId, appSecret, new IPatchManager() {
+            @Override
+            public void cleanPatch(Context context) {
+                TinkerInstaller.cleanPatch(context);
+            }
+
+            @Override
+            public void patch(Context context, String patchPath) {
+                TinkerInstaller.onReceiveUpgradePatch(context, patchPath);
+            }
+        });
+        PatchManager.getInstance().register(new Listener() {
+            @Override
+            public void onQuerySuccess(String response) {
+                Log.d(TAG, "onQuerySuccess response=" + response);
+            }
+
+            @Override
+            public void onQueryFailure(Throwable e) {
+                Log.d(TAG, "onQueryFailure e=" + e);
+            }
+
+            @Override
+            public void onDownloadSuccess(String path) {
+                Log.d(TAG, "onDownloadSuccess path=" + path);
+            }
+
+            @Override
+            public void onDownloadFailure(Throwable e) {
+                Log.d(TAG, "onDownloadFailure e=" + e);
+            }
+
+            @Override
+            public void onPatchSuccess() {
+                Log.d(TAG, "onPatchSuccess");
+            }
+
+            @Override
+            public void onPatchFailure() {
+                Log.d(TAG, "onPatchFailure");
+            }
+
+            @Override
+            public void onLoadSuccess() {
+                Log.d(TAG, "onLoadSuccess");
+            }
+
+            @Override
+            public void onLoadFailure() {
+                Log.d(TAG, "onLoadFailure");
+            }
+        });
+        PatchManager.getInstance().setTag(getChannel());
+        PatchManager.getInstance().setChannel(getChannel());
+        PatchManager.getInstance().queryAndPatch();
+    }
+
+    public String getChannel() {
+        String channel;
+        channel = ChannelReaderUtil.getChannel(getApplication());
+        if (TextUtils.isEmpty(channel)) {
+            return "R360";
+        }
+        return channel;
+    }
 }
