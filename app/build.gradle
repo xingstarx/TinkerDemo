@@ -59,9 +59,9 @@ android {
     }
 }
 
-
 rebuildChannel {
-    baseReleaseApk = new File(project.projectDir, "baseApk/app_base_release.apk")
+    baseReleaseApk = new File(project.projectDir, "protectedApk/app-base-"+ VERSION_NAME + ".apk")
+    releaseOutputDir = new File(project.projectDir, "channelApk/")
 }
 
 dependencies {
