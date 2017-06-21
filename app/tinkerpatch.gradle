@@ -126,7 +126,9 @@ if (buildWithTinker()) {
 
         tasks.all {
             if ("assemble${taskName.capitalize()}".equalsIgnoreCase(it.name)) {
-
+                if (gradle.getStartParameter().getTaskRequests().toString().contains("tinkerPatchRelease")) {
+                    return
+                }
                 it.doLast {
                     copy {
                         def fileNamePrefix = "${project.name}-${variant.baseName}"
