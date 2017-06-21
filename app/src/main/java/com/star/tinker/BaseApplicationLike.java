@@ -109,8 +109,10 @@ public class BaseApplicationLike extends DefaultApplicationLike {
                 Log.d(TAG, "onLoadFailure");
             }
         });
-        PatchManager.getInstance().setTag(getChannel());
-        PatchManager.getInstance().setChannel(getChannel());
+        String channel = getChannel();
+        Log.e(TAG, "channel == " + channel);
+        PatchManager.getInstance().setTag(channel);
+        PatchManager.getInstance().setChannel(channel);
         PatchManager.getInstance().queryAndPatch();
     }
 
