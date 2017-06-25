@@ -43,9 +43,6 @@ def buildWithTinker() {
     return hasProperty("TINKER_ENABLE") ? TINKER_ENABLE : ext.tinkerEnabled
 }
 
-def getTinkerBuildFlavorDirectory() {
-    return ext.tinkerBuildFlavorDirectory
-}
 
 def isRelease() {
     String  tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
@@ -93,9 +90,7 @@ if (buildWithTinker()) {
 
             pattern = ["classes*.dex",
                        "assets/secondary-dex-?.jar"]
-            loader = [
-                    "tinker.sample.android.app.BaseBuildInfo"
-            ]
+            loader = []
         }
 
         lib {
