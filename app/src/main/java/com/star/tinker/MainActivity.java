@@ -25,24 +25,24 @@ public class MainActivity extends AppCompatActivity {
     private PatternLockViewListener mPatternLockViewListener = new PatternLockViewListener() {
         @Override
         public void onStarted() {
-            Log.d(getClass().getName(), "Pattern drawing started");
+            Log.d(TAG, "Pattern drawing started");
         }
 
         @Override
         public void onProgress(List<PatternLockView.Dot> progressPattern) {
-            Log.d(getClass().getName(), "Pattern progress: " +
+            Log.d(TAG, "Pattern progress: " +
                     PatternLockUtils.patternToString(mPatternLockView, progressPattern));
         }
 
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
-            Log.d(getClass().getName(), "Pattern complete: " +
+            Log.d(TAG, "Pattern complete: " +
                     PatternLockUtils.patternToString(mPatternLockView, pattern));
         }
 
         @Override
         public void onCleared() {
-            Log.d(getClass().getName(), "Pattern has been cleared");
+            Log.d(TAG, "Pattern has been cleared");
         }
     };
 
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<PatternLockCompleteEvent>() {
                     @Override
                     public void accept(PatternLockCompleteEvent patternLockCompleteEvent) throws Exception {
-                        Log.d(getClass().getName(), "Complete: " + patternLockCompleteEvent.getPattern().toString());
+                        Log.d(TAG, "Complete: " + patternLockCompleteEvent.getPattern().toString());
                     }
                 });
 
@@ -83,15 +83,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void accept(PatternLockCompoundEvent event) throws Exception {
                         if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_STARTED) {
-                            Log.d(getClass().getName(), "Pattern drawing started");
+                            Log.d(TAG, "Pattern drawing started");
                         } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_PROGRESS) {
-                            Log.d(getClass().getName(), "Pattern progress: " +
+                            Log.d(TAG, "Pattern progress: " +
                                     PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
                         } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_COMPLETE) {
-                            Log.d(getClass().getName(), "Pattern complete: " +
+                            Log.d(TAG, "Pattern complete: " +
                                     PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
                         } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_CLEARED) {
-                            Log.d(getClass().getName(), "Pattern has been cleared");
+                            Log.d(TAG, "Pattern has been cleared");
                         }
                     }
                 });
