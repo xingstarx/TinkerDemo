@@ -1,116 +1,99 @@
 package com.star.tinker;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.Window;
+import android.view.WindowManager;
 
-import com.star.tinker.util.Utils;
-import com.tencent.tinker.lib.library.TinkerLoadLibrary;
-import com.tencent.tinker.lib.tinker.Tinker;
-import com.tencent.tinker.lib.tinker.TinkerInstaller;
-import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
+import com.andrognito.patternlockview.PatternLockView;
+import com.andrognito.patternlockview.listener.PatternLockViewListener;
+import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.andrognito.patternlockview.utils.ResourceUtils;
+import com.andrognito.rxpatternlockview.RxPatternLockView;
+import com.andrognito.rxpatternlockview.events.PatternLockCompleteEvent;
+import com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent;
+
+import java.util.List;
+
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
+    private PatternLockView mPatternLockView;
+
+    private PatternLockViewListener mPatternLockViewListener = new PatternLockViewListener() {
+        @Override
+        public void onStarted() {
+            Log.d(getClass().getName(), "Pattern drawing started");
+        }
+
+        @Override
+        public void onProgress(List<PatternLockView.Dot> progressPattern) {
+            Log.d(getClass().getName(), "Pattern progress: " +
+                    PatternLockUtils.patternToString(mPatternLockView, progressPattern));
+        }
+
+        @Override
+        public void onComplete(List<PatternLockView.Dot> pattern) {
+            Log.d(getClass().getName(), "Pattern complete: " +
+                    PatternLockUtils.patternToString(mPatternLockView, pattern));
+        }
+
+        @Override
+        public void onCleared() {
+            Log.d(getClass().getName(), "Pattern has been cleared");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
-        //test resource change
-        Log.e(TAG, "i am on onCreate string:" + getResources().getString(R.string.test_resource));
-//        Log.e(TAG, "i am on patch onCreate");
 
-        Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
+        mPatternLockView = (PatternLockView) findViewById(R.id.patter_lock_view);
+        mPatternLockView.setDotCount(3);
+        mPatternLockView.setDotNormalSize((int) ResourceUtils.getDimensionInPx(this, R.dimen.pattern_lock_dot_size));
+        mPatternLockView.setDotSelectedSize((int) ResourceUtils.getDimensionInPx(this, R.dimen.pattern_lock_dot_selected_size));
+        mPatternLockView.setPathWidth((int) ResourceUtils.getDimensionInPx(this, R.dimen.pattern_lock_path_width));
+        mPatternLockView.setAspectRatioEnabled(true);
+        mPatternLockView.setAspectRatio(PatternLockView.AspectRatio.ASPECT_RATIO_HEIGHT_BIAS);
+        mPatternLockView.setViewMode(PatternLockView.PatternViewMode.CORRECT);
+        mPatternLockView.setDotAnimationDuration(150);
+        mPatternLockView.setPathEndAnimationDuration(100);
+        mPatternLockView.setCorrectStateColor(ResourceUtils.getColor(this, R.color.white));
+        mPatternLockView.setInStealthMode(false);
+        mPatternLockView.setTactileFeedbackEnabled(true);
+        mPatternLockView.setInputEnabled(true);
+        mPatternLockView.addPatternLockListener(mPatternLockViewListener);
 
-        loadPatchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
-            }
-        });
+        RxPatternLockView.patternComplete(mPatternLockView)
+                .subscribe(new Consumer<PatternLockCompleteEvent>() {
+                    @Override
+                    public void accept(PatternLockCompleteEvent patternLockCompleteEvent) throws Exception {
+                        Log.d(getClass().getName(), "Complete: " + patternLockCompleteEvent.getPattern().toString());
+                    }
+                });
 
-        Button loadLibraryButton = (Button) findViewById(R.id.loadLibrary);
-
-        loadLibraryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // #method 1, hack classloader library path
-                TinkerLoadLibrary.installNavitveLibraryABI(getApplicationContext(), "armeabi");
-                System.loadLibrary("stlport_shared");
-
-                // #method 2, for lib/armeabi, just use TinkerInstaller.loadLibrary
-//                TinkerLoadLibrary.loadArmLibrary(getApplicationContext(), "stlport_shared");
-
-                // #method 3, load tinker patch library directly
-//                TinkerInstaller.loadLibraryFromTinker(getApplicationContext(), "assets/x86", "stlport_shared");
-
-            }
-        });
-
-        Button cleanPatchButton = (Button) findViewById(R.id.cleanPatch);
-
-        cleanPatchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tinker.with(getApplicationContext()).cleanPatch();
-            }
-        });
-
-        Button killSelfButton = (Button) findViewById(R.id.killSelf);
-
-        killSelfButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShareTinkerInternals.killAllOtherProcess(getApplicationContext());
-                android.os.Process.killProcess(android.os.Process.myPid());
-            }
-        });
-
-        Button buildInfoButton = (Button) findViewById(R.id.showInfo);
-
-        buildInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showInfo();
-            }
-        });
-    }
-
-    public void showInfo() {
-        Tinker tinker = Tinker.with(getApplicationContext());
-        String str;
-        if (tinker.isTinkerLoaded()) {
-            str = "[patch is loaded]";
-        } else {
-            str = "[patch is not loaded]";
-        }
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.e(TAG, "i am on onResume");
-//        Log.e(TAG, "i am on patch onResume");
-        super.onResume();
-        Utils.setBackground(false);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Utils.setBackground(true);
+        RxPatternLockView.patternChanges(mPatternLockView)
+                .subscribe(new Consumer<PatternLockCompoundEvent>() {
+                    @Override
+                    public void accept(PatternLockCompoundEvent event) throws Exception {
+                        if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_STARTED) {
+                            Log.d(getClass().getName(), "Pattern drawing started");
+                        } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_PROGRESS) {
+                            Log.d(getClass().getName(), "Pattern progress: " +
+                                    PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
+                        } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_COMPLETE) {
+                            Log.d(getClass().getName(), "Pattern complete: " +
+                                    PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
+                        } else if (event.getEventType() == PatternLockCompoundEvent.EventType.PATTERN_CLEARED) {
+                            Log.d(getClass().getName(), "Pattern has been cleared");
+                        }
+                    }
+                });
     }
 }
