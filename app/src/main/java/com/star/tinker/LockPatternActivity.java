@@ -18,7 +18,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
-public class MainActivity extends AppCompatActivity {
+public class LockPatternActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     private PatternLockView mPatternLockView;
 
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         public void onComplete(List<PatternLockView.Dot> pattern) {
             Log.d(TAG, "Pattern complete: " +
                     PatternLockUtils.patternToString(mPatternLockView, pattern));
+            
         }
 
         @Override
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_lock_pattern);
 
         mPatternLockView = (PatternLockView) findViewById(R.id.patter_lock_view);
         mPatternLockView.setDotCount(3);
