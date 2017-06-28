@@ -30,6 +30,7 @@
             android:name=".service.SampleResultService"
             android:exported="false" />
 
+        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

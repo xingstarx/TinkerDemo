@@ -1,5 +1,6 @@
 package com.star.tinker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,7 +39,9 @@ public class LockPatternActivity extends AppCompatActivity {
         public void onComplete(List<PatternLockView.Dot> pattern) {
             Log.d(TAG, "Pattern complete: " +
                     PatternLockUtils.patternToString(mPatternLockView, pattern));
-            
+            Intent intent = new Intent(LockPatternActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         @Override
